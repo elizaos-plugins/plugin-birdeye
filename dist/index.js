@@ -222,10 +222,11 @@ var extractSymbols = (text, mode = "loose") => {
 var waitFor = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 var formatPortfolio = (response) => {
   const { items } = response.data;
-  if (!items?.length) return "No tokens found in portfolio";
+  if (!(items == null ? void 0 : items.length)) return "No tokens found in portfolio";
   return items.map((item) => {
-    const value = item?.priceUsd?.toFixed(2);
-    const amount = item?.uiAmount?.toFixed(4);
+    var _a, _b;
+    const value = (_a = item == null ? void 0 : item.priceUsd) == null ? void 0 : _a.toFixed(2);
+    const amount = (_b = item == null ? void 0 : item.uiAmount) == null ? void 0 : _b.toFixed(4);
     return `\u2022 ${item.symbol || "Unknown Token"}: ${amount} tokens${value !== "0.00" ? ` (Value: $${value || "unknown"})` : ""}`;
   }).join("\n");
 };
@@ -233,7 +234,7 @@ var convertToStringParams = (params) => {
   return Object.entries(params || {}).reduce(
     (acc, [key, value]) => ({
       ...acc,
-      [key]: value?.toString() || ""
+      [key]: (value == null ? void 0 : value.toString()) || ""
     }),
     {}
   );
@@ -283,8 +284,9 @@ var BirdeyeProvider = class extends BaseCachedProvider {
    * COMMON FETCH FUNCTIONS
    */
   async fetchWithRetry(url, options = {}) {
+    var _a;
     let attempts = 0;
-    const chain = options.headers?.["x-chain"] || settings.BIRDEYE_CHAIN || "solana";
+    const chain = ((_a = options.headers) == null ? void 0 : _a["x-chain"]) || settings.BIRDEYE_CHAIN || "solana";
     while (attempts < this.maxRetries) {
       attempts++;
       try {
@@ -521,7 +523,7 @@ var BirdeyeProvider = class extends BaseCachedProvider {
     return this.fetchWithCacheAndRetry({
       url: BIRDEYE_ENDPOINTS.token.new_listing,
       params,
-      headers: options?.headers
+      headers: options == null ? void 0 : options.headers
     });
   }
   // Get top traders of given token.
@@ -817,11 +819,11 @@ var tokenSearchAddressAction = {
 ${results.map(
         (result, i) => `${formatTokenReport(addresses[i], i, result)}`
       ).join("\n\n")}`;
-      callback?.({ text: completeResults });
+      callback == null ? void 0 : callback({ text: completeResults });
       return true;
     } catch (error) {
       console.error("Error in searchTokens handler:", error.message);
-      callback?.({ text: `Error: ${error.message}` });
+      callback == null ? void 0 : callback({ text: `Error: ${error.message}` });
       return false;
     }
   },
@@ -870,8 +872,9 @@ ${results.map(
   ]
 };
 var formatTokenReport = (address, _index, result) => {
+  var _a, _b, _c, _d, _e;
   let output = "";
-  if (result.overview?.data) {
+  if ((_a = result.overview) == null ? void 0 : _a.data) {
     output += "\n";
     output += "Token Overview:\n";
     output += `\u{1F4DD} Name: ${result.overview.data.name}
@@ -912,10 +915,10 @@ var formatTokenReport = (address, _index, result) => {
 `;
     output += `\u{1F4B5} Price: ${formatPrice(result.overview.data.price)}
 `;
-    output += `\u{1F4DC} Description: ${result.overview.data.extensions?.description ?? "N/A"}
+    output += `\u{1F4DC} Description: ${((_b = result.overview.data.extensions) == null ? void 0 : _b.description) ?? "N/A"}
 `;
   }
-  if (result.marketData?.data) {
+  if ((_c = result.marketData) == null ? void 0 : _c.data) {
     output += "\n";
     output += "Market Data:\n";
     output += `\u{1F4A7} Liquidity: ${formatValue(result.marketData.data.liquidity)}
@@ -931,7 +934,7 @@ var formatTokenReport = (address, _index, result) => {
     output += `\u{1F4B0} Circulating Market Cap: ${formatValue(result.marketData.data.circulating_marketcap)}
 `;
   }
-  if (result.tradeData?.data) {
+  if ((_d = result.tradeData) == null ? void 0 : _d.data) {
     output += "\n";
     output += "Trade Data:\n";
     output += `\u{1F465} Holders: ${result.tradeData.data.holder}
@@ -945,7 +948,7 @@ var formatTokenReport = (address, _index, result) => {
     output += `\u{1F4B5} Current Price: $${formatPrice(result.tradeData.data.price)}
 `;
   }
-  if (result.security?.data) {
+  if ((_e = result.security) == null ? void 0 : _e.data) {
     output += "\n";
     output += "Ownership Distribution:\n";
     output += `\u{1F3E0} Owner Address: ${shortenAddress(result.security.data.ownerAddress)}
@@ -1030,7 +1033,10 @@ var tokenSearchSymbolAction = {
       const validResults = results.map(
         (r, i) => r.data.items.filter((item) => item.type === "token" && item.result).flatMap(
           (item) => item.result.filter(
-            (r2) => r2.symbol?.toLowerCase() === symbols[i].toLowerCase()
+            (r2) => {
+              var _a;
+              return ((_a = r2.symbol) == null ? void 0 : _a.toLowerCase()) === symbols[i].toLowerCase();
+            }
           )
         )
       );
@@ -1042,11 +1048,11 @@ var tokenSearchSymbolAction = {
 ${validResults.map(
         (result, i) => `${formatTokenSummary(symbols[i], i, result)}`
       ).join("\n")}`;
-      callback?.({ text: completeResults });
+      callback == null ? void 0 : callback({ text: completeResults });
       return true;
     } catch (error) {
       console.error("Error in searchTokens handler:", error.message);
-      callback?.({ text: `Error: ${error.message}` });
+      callback == null ? void 0 : callback({ text: `Error: ${error.message}` });
       return false;
     }
   },
@@ -1223,11 +1229,11 @@ var walletSearchAddressAction = {
 ${results.map(
         (result, i) => `${formatWalletReport(addresses[i], results.length, i, result)}`
       ).join("\n\n")}`;
-      callback?.({ text: completeResults });
+      callback == null ? void 0 : callback({ text: completeResults });
       return true;
     } catch (error) {
       console.error("Error in searchTokens handler:", error.message);
-      callback?.({ text: `Error: ${error.message}` });
+      callback == null ? void 0 : callback({ text: `Error: ${error.message}` });
       return false;
     }
   },
@@ -1289,7 +1295,10 @@ var formatWalletReport = (address, totalResults, index, result) => {
 `;
   header += "\u{1F516} Top Holdings:";
   const tokenList = tokens.map(
-    (token) => `\u2022 $${token.symbol.toUpperCase()}: $${token.valueUsd?.toLocaleString()} (${token.uiAmount?.toFixed(4)} tokens)`
+    (token) => {
+      var _a, _b;
+      return `\u2022 $${token.symbol.toUpperCase()}: $${(_a = token.valueUsd) == null ? void 0 : _a.toLocaleString()} (${(_b = token.uiAmount) == null ? void 0 : _b.toFixed(4)} tokens)`;
+    }
   ).join("\n");
   return `${header}
 ${tokenList}`;
